@@ -138,39 +138,6 @@ void XYOrbitViewController::setShiftOrbitStatus()
   setStatus("<b>Left-Click:</b> Move X/Y.  <b>Right-Click:</b> Zoom.");
 }
 
-void XYOrbitViewController::moveFocalPoint(
-  float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y)
-{
-  (void) distance;
-
-  setCursor(MoveXY);
-  int width = camera_->getViewport()->getActualWidth();
-  int height = camera_->getViewport()->getActualHeight();
-
-  Ogre::Ray mouse_ray = camera_->getCameraToViewportRay(
-    (last_x + diff_x) / static_cast<float>(width), (last_y + diff_y) / static_cast<float>(height));
-
-  Ogre::Ray last_mouse_ray = camera_->getCameraToViewportRay(
-    last_x / static_cast<float>(width), last_y / static_cast<float>(height));
-
-  auto last_intersect = intersectGroundPlane(last_mouse_ray);
-  auto intersect = intersectGroundPlane(mouse_ray);
-  if (last_intersect.first && intersect.first) {
-    Ogre::Vector3 motion = last_intersect.second - intersect.second;
-
-    // When dragging near the horizon, the motion can get out of control.
-    // This throttles it to an arbitrary limit per mouse event.
-    float motion_distance_limit = 1;  /*meter*/
-    if (motion.length() > motion_distance_limit) {
-      motion.normalise();
-      motion *= motion_distance_limit;
-    }
-
-    focal_point_property_->add(motion);
-    emitConfigChanged();
-  }
-}
-
 std::pair<bool, Ogre::Vector3> XYOrbitViewController::intersectGroundPlane(Ogre::Ray mouse_ray)
 {
   // convert rays into reference frame

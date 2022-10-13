@@ -80,9 +80,6 @@ public:
 protected:
   void updateCamera() override;
 
-  void moveFocalPoint(
-    float distance, int32_t diff_x, int32_t diff_y, int32_t last_x, int32_t last_y) override;
-
   std::pair<bool, Ogre::Vector3> intersectGroundPlane(Ogre::Ray mouse_ray);
 
   void handleWheelEvent(rviz_common::ViewportMouseEvent & event, float distance) override;
